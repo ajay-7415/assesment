@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { setTodo, deleteTodos } from './features/todo/todoSlice'
+import { setTodo, deleteTodos, updateComplete } from './features/todo/todoSlice'
 
 const localStoragePrefix = 'Todo_List-'
 const TodoStoreagePrefix = `${localStoragePrefix}-todos`
@@ -22,12 +22,20 @@ function App() {
     const newTodo = {
       name: todoInput,
       id: new Date().valueOf().toString(),
+      complete: false,
     }
 
     dispatch(setTodo({ newTodo }))
     setTodoInput('')
 
     saveTodos()
+  }
+
+  const handleChange = (e) => {
+    const parent = e.target.closest('.list-item')
+    const id = parent.dataset.todoId
+    const todo = todos.find((t) => t.id === id)
+    dispatch(updateComplete(todo))
   }
 
   const handleTodoInput = (e) => {
@@ -44,11 +52,20 @@ function App() {
         {todos?.map((todo) => {
           const { name, id } = todo
           return (
-            <li className='list-item'>
+            <li className='list-item' data-todo-id={id} key={id}>
               <label className='list-item-label'>
-                <span>{name}</span>
+                <input
+                  type='checkbox'
+                  onChange={handleChange}
+                  data-list-item-checkbox
+                />
+
+                <span data-list-item-text>{name}</span>
               </label>
-              <button onClick={() => dispatch(deleteTodos({ id }))}>
+              <button
+                data-button-delete
+                onClick={() => dispatch(deleteTodos({ id }))}
+              >
                 Delete
               </button>
             </li>
@@ -65,8 +82,3 @@ function App() {
 }
 
 export default App
-
-export function loadTodos() {
-  const todostring = localStorage.getItem(TodoStoreagePrefix)
-  return JSON.parse(todostring) || []
-}

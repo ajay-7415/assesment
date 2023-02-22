@@ -20,7 +20,7 @@
   cursor: pointer;
 }
 
-.list-item-label:hover > [data-list-item-text] {
+.list-item-label:hover {
   color: #333;
   text-decoration: line-through;
 }

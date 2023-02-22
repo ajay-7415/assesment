@@ -13,7 +13,7 @@ const todoSlice = createSlice({
   reducers: {
     setTodo: (state, { payload }) => {
       const { newTodo } = payload
-      console.log(newTodo, 'payload')
+
       return { ...state, todos: [...state.todos, newTodo] }
     },
 
@@ -24,10 +24,17 @@ const todoSlice = createSlice({
       state.todos = [...newTodo]
       saveTodos(state)
     },
+    updateComplete: (state, { payload }) => {
+      const index = state.todos.findIndex((index) => index.id === payload.id)
+      state.todos.splice(index, 1)
+      const readOnly = { ...payload }
+      readOnly.complete = !readOnly.complete
+      state.todos.splice(index, 0, readOnly)
+    },
   },
 })
 
-export const { setTodo, deleteTodos } = todoSlice.actions
+export const { setTodo, deleteTodos, updateComplete } = todoSlice.actions
 
 export default todoSlice.reducer
 
